@@ -243,15 +243,15 @@ public class GameEngine {
         System.out.println("You wake up in a locked facility...");
         System.out.println("Goal: Find your way to the exit!\n");
         System.out.println("Available actions (type the word and press Enter):");
-        System.out.println("  - look           : inspect the current room");
-        System.out.println("  - move <room>    : move to a connected room");
-        System.out.println("  - back           : go back to the previous room");
-        System.out.println("  - pickup <item>  : pick up an item in the room");
-        System.out.println("  - inventory / i  : view your inventory");
-        System.out.println("  - solve <puzzle> : attempt to solve a puzzle");
-        System.out.println("  - map            : show the full map");
-        System.out.println("  - help           : show this list again");
-        System.out.println("  - quit / exit    : leave the game");
+        System.out.println("  - look / l       : inspect the current room");
+        System.out.println("  - move <room> / m <room>          : move to a connected room");
+        System.out.println("  - back / b       : go back to the previous room");
+        System.out.println("  - pickup <item> / p <item>        : pick up an item in the room");
+        System.out.println("  - inventory / i      : view your inventory");
+        System.out.println("  - solve <puzzle> / s <puzzle>     : attempt to solve a puzzle");
+        System.out.println("  - map                : show the full map");
+        System.out.println("  - help / h           : show this list again");
+        System.out.println("  - quit / exit / q    : leave the game");
         System.out.println("\nTip: type 'help' any time to see this list again.\n");
 
         printStatus();
@@ -302,10 +302,12 @@ public class GameEngine {
 
         switch (command) {
             case "look":
+            case "l":
                 player.getCurrentRoom().inspect();
                 return false;
 
             case "move":
+            case "m":
                 if (argument.isEmpty()) {
                     throw new InvalidCommandException("Syntax: move <room_name>");
                 }
@@ -313,6 +315,7 @@ public class GameEngine {
                 return true;
 
             case "back":
+            case "b":
                 if (player.goBack()) {
                     System.out.println("You moved back to room: " + player.getCurrentRoom().getName());
                     return true;
@@ -322,6 +325,7 @@ public class GameEngine {
                 }
 
             case "pickup":
+            case "p":
                 if (argument.isEmpty()) {
                     throw new InvalidCommandException("Syntax: pickup <item_name>");
                 }
@@ -354,6 +358,7 @@ public class GameEngine {
                 return false;
 
             case "solve":
+            case "s":
                 if (argument.isEmpty()) {
                     throw new InvalidCommandException("Syntax: solve <puzzle_name>");
                 }
@@ -365,10 +370,12 @@ public class GameEngine {
                 return false;
 
             case "help":
+            case "h":
                 showHelp();
                 return false;
 
             case "quit":
+            case "q":
             case "exit":
                 gameRunning = false;
                 System.out.println("Thank you for playing!");
@@ -794,15 +801,17 @@ public class GameEngine {
      */
     private void showHelp() {
         System.out.println("\n=== COMMAND LIST ===");
-        System.out.println("look                - Inspect the current room");
-        System.out.println("move <room_name>    - Move to another room");
-        System.out.println("back                - Move back to the previous room");
-        System.out.println("pickup <item_name>  - Pick up an item");
-        System.out.println("inventory           - Show your inventory");
-        System.out.println("solve <puzzle_name> - Solve a puzzle");
-        System.out.println("map                 - View the full map (debug)");
-        System.out.println("help                - Show this menu");
-        System.out.println("quit/exit           - Exit the game");
+        System.out.println("look / l                         - Inspect the current room");
+        System.out.println("move <room_name> / m <room>      - Move to a connected room");
+        System.out.println("back / b                         - Move back to the previous room");
+        System.out.println("pickup <item_name> / p <item>    - Pick up an item");
+        System.out.println("inventory / i                    - Show your inventory");
+        System.out.println("solve <puzzle_name> / s <puzzle> - Solve a puzzle");
+        System.out.println("map                              - View the full map (debug)");
+        System.out.println("help / h                         - Show this menu");
+        System.out.println("quit/exit/q                      - Exit the game");
+        System.out.println("\nTip: type 'help' any time to see this list again.\n");
+
     }
 
     /**
