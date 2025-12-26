@@ -109,10 +109,10 @@ public class GameEngine {
         Room hallway = new Room("Hallway");
         Room room1 = new Room("Room 1");
         Room room2 = new Room("Room 2");
-        Room room3 = new Room("Room 3", "key_room3");
-        Room room4 = new Room("Room 4", "key_room4");
-        Room room5 = new Room("Room 5", "key_room5");
-        Room exit = new Room("Exit Room", "Exit Key");
+        Room room3 = new Room("Room 3", "key_r3");
+        Room room4 = new Room("Room 4", "key_r4");
+        Room room5 = new Room("Room 5", "key_r5");
+        Room exit = new Room("Exit Room", "Exit_Key");
         exit.setExit(true);
 
         // Subrooms
@@ -136,7 +136,7 @@ public class GameEngine {
         Item r5aItem = new Item("Silver Coin", 3, Item.ItemType.CLUE);
 
         // Required end-game item
-        requiredItems.add("Exit Key");
+        requiredItems.add("Exit_Key");
 
         // Puzzles
         RiddlePuzzle p1A = new RiddlePuzzle("1A Riddle", 2,
@@ -145,11 +145,11 @@ public class GameEngine {
         RiddlePuzzle p1B = new RiddlePuzzle("1B Riddle", 3,
                 "What has keys but no locks, space but no room, and you can enter but not go inside?",
                 "Keyboard");
-        RiddlePuzzle p3 = new RiddlePuzzle("Room3 Riddle", 3,
+        RiddlePuzzle p3 = new RiddlePuzzle("r3_puzzle", 3,
                 "I speak without a mouth and hear without ears. I have nobody, but I come alive with wind. What am I?",
                 "Echo");
-        // 4B puzzle that grants Exit Key
-        CodePuzzle p4b = new CodePuzzle("4B Code Lock", 4, "7777");
+        // 4B puzzle that grants Exit_Key
+        CodePuzzle p4b = new CodePuzzle("4B_code", 4, "7777");
 
         // 5B puzzles (three puzzles)
         RiddlePuzzle p5_1 = new RiddlePuzzle("Puzzle 1", 2,
@@ -192,7 +192,7 @@ public class GameEngine {
         // Room 4 and subrooms
         r4a.addContent(r4aItem);
         r4a.addConnectedRoom(r4b);
-        r4b.addContent(p4b); // solving p4b grants Exit Key
+        r4b.addContent(p4b); // solving p4b grants Exit_Key
         room4.addContent(r4a);
         room4.addConnectedRoom(room5); // Room4 <-> Room5
 
@@ -438,7 +438,7 @@ public class GameEngine {
             if (!player.hasKey(req)) {
                 throw new LockedRoomException("This room is locked! Required key: " + req);
             } else {
-                // If it's the final exit room, do not consume the Exit Key (keeps it in
+                // If it's the final exit room, do not consume the Exit_Key (keeps it in
                 // inventory)
                 if (targetRoom.isExit()) {
                     System.out.println(
@@ -521,14 +521,14 @@ public class GameEngine {
         puzzle.inspect();
 
         // Ask if player wants to solve now or continue
-        System.out.println("\nDo you want to solve this puzzle now? (yes/no)");
-        System.out.print("Your choice: ");
-        String choice = scanner.nextLine().trim().toLowerCase();
+        // System.out.println("\nDo you want to solve this puzzle now? (yes/no)");
+        // System.out.print("Your choice: ");
+        // String choice = scanner.nextLine().trim().toLowerCase();
 
-        if (!choice.equals("yes") && !choice.equals("y")) {
-            System.out.println("You decided to continue without solving the puzzle.");
-            return;
-        }
+        // if (!choice.equals("yes") && !choice.equals("y")) {
+        // System.out.println("You decided to continue without solving the puzzle.");
+        // return;
+        // }
 
         // Player wants to solve, ask for answer
         System.out.println("\nType only the answer word or phrase.");
@@ -539,8 +539,6 @@ public class GameEngine {
         if (puzzle.attemptSolve(answer)) {
             System.out.println("Congratulations! You solved the puzzle!");
             puzzle.setSolved(true);
-
-            // Puzzle giải được có thể unlock các thứ (ví dụ: thêm key, unlock room)
             handlePuzzleSolved(puzzle);
         } else {
             System.out.println("Wrong answer! Try again.");
@@ -587,13 +585,13 @@ public class GameEngine {
 
         // Show puzzle info and ask to solve
         chosen.inspect();
-        System.out.println("\nDo you want to solve this puzzle now? (yes/no)");
-        System.out.print("Your choice: ");
-        String choice = scanner.nextLine().trim().toLowerCase();
-        if (!choice.equals("yes") && !choice.equals("y")) {
-            System.out.println("You decided to continue without solving the puzzle.");
-            return;
-        }
+        // System.out.println("\nDo you want to solve this puzzle now? (yes/no)");
+        // System.out.print("Your choice: ");
+        // String choice = scanner.nextLine().trim().toLowerCase();
+        // if (!choice.equals("yes") && !choice.equals("y")) {
+        // System.out.println("You decided to continue without solving the puzzle.");
+        // return;
+        // }
 
         System.out.print("Your answer is: ");
         String answer = scanner.nextLine().trim();
@@ -615,12 +613,12 @@ public class GameEngine {
 
         // Room1 subroom 1A solved -> place key for Room3 inside subroom 1A
         if (puzzleName.equalsIgnoreCase("1A Riddle")) {
-            Item key = new Item("key_room3", 1, Item.ItemType.KEY);
+            Item key = new Item("key_r3", 1, Item.ItemType.KEY);
             Room where = findRoom("1A");
             if (where != null) {
                 where.addContent(key);
                 System.out.println("A key to Room 3 has been revealed in " + where.getName()
-                        + ". Use 'pickup key_room3' to collect it.");
+                        + ". Use 'pickup key_r3' to collect it.");
             } else {
                 player.addToInventory(key);
                 System.out.println("A key to Room 3 has been added to your inventory (fallback): " + key.getName());
@@ -629,12 +627,12 @@ public class GameEngine {
 
         // Room1 subroom 1B solved -> place key for Room4 inside subroom 1B
         if (puzzleName.equalsIgnoreCase("1B Riddle")) {
-            Item key = new Item("key_room4", 1, Item.ItemType.KEY);
+            Item key = new Item("key_r4", 1, Item.ItemType.KEY);
             Room where = findRoom("1B");
             if (where != null) {
                 where.addContent(key);
                 System.out.println("A key to Room 4 has been revealed in " + where.getName()
-                        + ". Use 'pickup key_room4' to collect it.");
+                        + ". Use 'pickup key_r4' to collect it.");
             } else {
                 player.addToInventory(key);
                 System.out.println("A key to Room 4 has been added to your inventory (fallback): " + key.getName());
@@ -642,30 +640,30 @@ public class GameEngine {
         }
 
         // Room3 puzzle solved -> place key for Room5 inside Room 3
-        if (puzzleName.equalsIgnoreCase("Room3 Riddle")) {
-            Item key = new Item("key_room5", 1, Item.ItemType.KEY);
+        if (puzzleName.equalsIgnoreCase("r3_puzzle")) {
+            Item key = new Item("key_r5", 1, Item.ItemType.KEY);
             Room where = findRoom("Room 3");
             if (where != null) {
                 where.addContent(key);
                 System.out.println("A key to Room 5 has been revealed in " + where.getName()
-                        + ". Use 'pickup key_room5' to collect it.");
+                        + ". Use 'pickup key_r5' to collect it.");
             } else {
                 player.addToInventory(key);
                 System.out.println("A key to Room 5 has been added to your inventory (fallback): " + key.getName());
             }
         }
 
-        // 4B code lock -> place Exit Key inside subroom 4B
-        if (puzzleName.equalsIgnoreCase("4B Code Lock")) {
+        // 4B_code -> place Exit Key inside subroom 4B
+        if (puzzleName.equalsIgnoreCase("4B_code")) {
             Item exitKey = new Item("Exit_Key", 50, Item.ItemType.KEY);
             Room where = findRoom("4B");
             if (where != null) {
                 where.addContent(exitKey);
-                System.out.println("You solved the 4B code lock. The Exit_Key has appeared in " + where.getName()
+                System.out.println("You solved the 4B_code. The Exit_Key has appeared in " + where.getName()
                         + ". Use 'pickup Exit_Key' to collect it.");
             } else {
                 player.addToInventory(exitKey);
-                System.out.println("You solved the 4B code lock and received the Exit_Key (fallback)!");
+                System.out.println("You solved the 4B_code and received the Exit_Key (fallback)!");
             }
         }
 
@@ -748,46 +746,77 @@ public class GameEngine {
      * Player must collect all required items, solve at least one puzzle in Room 5B,
      * AND reach the EXIT.
      */
+    // public void winConditionCheck() {
+    // if (!player.getCurrentRoom().isExit()) {
+    // return; // Not at exit yet
+    // }
+
+    // // Check if player has all required items
+    // ArrayList<String> missingItems = new ArrayList<>();
+    // for (String requiredItem : requiredItems) {
+    // boolean hasItem = false;
+    // for (Item item : player.getInventory()) {
+    // if (item.getName().equalsIgnoreCase(requiredItem)) {
+    // hasItem = true;
+    // break;
+    // }
+    // }
+    // if (!hasItem) {
+    // missingItems.add(requiredItem);
+    // }
+    // }
+
+    // // Check if at least one puzzle in Room 5B is solved
+    // boolean puzzle5BSolved = isAnyPuzzleIn5BSolved();
+
+    // if (missingItems.isEmpty() && puzzle5BSolved) {
+    // // Win condition met: at exit, has all required items, and solved a puzzle in
+    // 5B
+    // System.out.println("\n" + "=".repeat(50));
+    // System.out.println("CONGRATULATIONS! YOU ESCAPED THE ROOM!");
+    // System.out.println("You collected all required items, solved a puzzle in Room
+    // 5B, and reached the exit!");
+    // System.out.println("Number of turns: " + turnCounter);
+    // System.out.println("=".repeat(50));
+    // gameRunning = false;
+    // } else {
+    // // At exit but missing required items or unsolved puzzles
+    // System.out.println("\n" + "=".repeat(50));
+    // if (!missingItems.isEmpty()) {
+    // System.out.println("You reached the EXIT, but you're missing required
+    // items:");
+    // for (String item : missingItems) {
+    // System.out.println(" - " + item);
+    // }
+    // }
+    // if (!puzzle5BSolved) {
+    // System.out.println("You need to solve at least one puzzle in Room 5B to
+    // escape!");
+    // }
+    // System.out.println("You need to fulfill all conditions to escape!");
+    // System.out.println("=".repeat(50));
+    // }
+    // }
+
     public void winConditionCheck() {
         if (!player.getCurrentRoom().isExit()) {
             return; // Not at exit yet
         }
 
-        // Check if player has all required items
-        ArrayList<String> missingItems = new ArrayList<>();
-        for (String requiredItem : requiredItems) {
-            boolean hasItem = false;
-            for (Item item : player.getInventory()) {
-                if (item.getName().equalsIgnoreCase(requiredItem)) {
-                    hasItem = true;
-                    break;
-                }
-            }
-            if (!hasItem) {
-                missingItems.add(requiredItem);
-            }
-        }
-
         // Check if at least one puzzle in Room 5B is solved
         boolean puzzle5BSolved = isAnyPuzzleIn5BSolved();
 
-        if (missingItems.isEmpty() && puzzle5BSolved) {
-            // Win condition met: at exit, has all required items, and solved a puzzle in 5B
+        if (puzzle5BSolved) {
+            // Win condition met: at exit, and solved a puzzle in 5B
             System.out.println("\n" + "=".repeat(50));
             System.out.println("CONGRATULATIONS! YOU ESCAPED THE ROOM!");
-            System.out.println("You collected all required items, solved a puzzle in Room 5B, and reached the exit!");
+            System.out.println("You solved a puzzle in Room 5B, and reached the exit!");
             System.out.println("Number of turns: " + turnCounter);
             System.out.println("=".repeat(50));
             gameRunning = false;
         } else {
             // At exit but missing required items or unsolved puzzles
             System.out.println("\n" + "=".repeat(50));
-            if (!missingItems.isEmpty()) {
-                System.out.println("You reached the EXIT, but you're missing required items:");
-                for (String item : missingItems) {
-                    System.out.println("  - " + item);
-                }
-            }
             if (!puzzle5BSolved) {
                 System.out.println("You need to solve at least one puzzle in Room 5B to escape!");
             }

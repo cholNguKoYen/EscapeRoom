@@ -3,9 +3,11 @@
 This is a simple console-based escape-room game.
 
 How to run
+
 - Compile all `.java` files and run `Main`.
 
 Basic commands (type after the prompt `> `)
+
 - `look` : inspect current room (shows contents and subrooms)
 - `move <room_name>` : move to a connected room or subroom
 - `back` : go back to previous room
@@ -18,21 +20,23 @@ Basic commands (type after the prompt `> `)
 - `quit` / `exit` : exit game
 
 Key mechanics and special behaviors
+
 - Keys revealed by solving puzzles are now placed as items inside a room (usually the same subroom where the puzzle was solved). You must `pickup <key_name>` to add it to your inventory before using it to open locked rooms.
-- Some locked rooms consume keys when you enter them (the key is removed from inventory). The `Exit Key` is NOT consumed when opening the Exit Room.
+- Some locked rooms consume keys when you enter them (the key is removed from inventory). The `Exit_Key` is NOT consumed when opening the Exit Room.
 - `5B` contains three puzzles. Use `solve 5B` to list and optionally sort puzzles by difficulty, then pick one to attempt. Solving a puzzle in `5B` reveals the Exit Room (a new connection from Room 5).
 - `4B` contains a code lock; solving it will spawn the `Exit Key` inside `4B` (you must `pickup Exit Key`).
 
 Winning the game
+
 - Reach the `Exit Room` and have the `Exit Key` in your inventory.
 
 Notes
+
 - Room and item names are matched case-insensitively.
 - If a revealed key is not in the expected room (unexpected state), the engine may fall back to placing it directly into your inventory.
 
-
-
 ========================TOPIC========================
+
 # Programming Assignment Name: Escape Room
 
 **Description:**
