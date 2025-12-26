@@ -13,11 +13,9 @@ public class RiddlePuzzle extends Puzzle {
     
     @Override
     public void inspect() {
-        super.inspect();
-        if (!solved) {
-            System.out.println("Riddle: " + riddle);
-            System.out.println("Hack answer: " + answer);
-        }
+        // Only show minimal metadata when inspecting generally.
+        // The full riddle text should be shown only when the player chooses to solve.
+        super.inspect(); 
     }
     
     @Override
@@ -35,6 +33,13 @@ public class RiddlePuzzle extends Puzzle {
     
     public String getRiddle() {
         return riddle;
+    }
+
+    /**
+     * Return the answer (hack) for display when the player chooses to solve.
+     */
+    public String getAnswer() {
+        return answer;
     }
 }
 

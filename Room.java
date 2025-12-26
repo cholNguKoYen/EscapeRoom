@@ -85,9 +85,8 @@ public class Room extends GameComponent {
     }
 
     /**
-     * Recursive method để explore (khám phá) tất cả các phòng
-     * 
-     * @param depth Độ sâu hiện tại trong cây recursive
+     * Recursive method to explore all rooms and subrooms.
+     * @param depth 
      */
     public void exploreRecursive(int depth) {
         String indent = "  ".repeat(depth);
@@ -110,52 +109,46 @@ public class Room extends GameComponent {
     }
 
     /**
-     * Recursive method để tìm item trong phòng và các phòng con
-     * 
-     * @param itemName Tên item cần tìm
-     * @return true nếu tìm thấy, false nếu không
+     * Recursive method to find if an item exists in this room or any subrooms or connected rooms.
+     * @param itemName 
+     * @return true if the item is found anywhere in this room structure
      */
     public boolean containsItemRecursive(String itemName) {
-        // Tìm trong contents của phòng hiện tại
+        // find in current room contents
         for (GameComponent component : contents) {
             if (component instanceof Item && component.getName().equalsIgnoreCase(itemName)) {
                 return true;
             }
-            // Nếu là Room con, tìm recursive
+            // if subroom, search recursively
             if (component instanceof Room) {
                 if (((Room) component).containsItemRecursive(itemName)) {
                     return true;
                 }
             }
         }
-
-        // Tìm trong connected rooms
+        // search in connected rooms
         for (Room room : connectedRooms) {
             if (room.containsItemRecursive(itemName)) {
                 return true;
             }
         }
-
         return false;
     }
 
     /**
-     * Recursive method để tính độ sâu tối đa của cây phòng
-     * 
-     * @return Độ sâu tối đa
+     * Recursive method to find the maximum depth of this room structure.
+     * @return maximum depth
      */
     public int maxDepthRecursive() {
         int maxDepth = 0;
-
-        // Tìm độ sâu tối đa trong subrooms
+        // find depth in subrooms
         for (GameComponent component : contents) {
             if (component instanceof Room) {
                 int depth = ((Room) component).maxDepthRecursive();
                 maxDepth = Math.max(maxDepth, depth);
             }
         }
-
-        // Tìm độ sâu tối đa trong connected rooms
+        // find depth in connected rooms
         for (Room room : connectedRooms) {
             int depth = room.maxDepthRecursive();
             maxDepth = Math.max(maxDepth, depth);
@@ -188,7 +181,6 @@ public class Room extends GameComponent {
 
     /**
      * Remove an item from the current room or its subrooms.
-     * 
      * @param item The item to remove
      * @return true if the item was found and removed, false otherwise
      */

@@ -112,7 +112,22 @@ public class Player {
      * Sort inventory alphabetically by name.
      */
     public void sortInventoryAlphabetical() {
-        inventory.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+        // Selection sort by name (case-insensitive) - implemented but not used by default
+        for (int i = 0; i < inventory.size() - 1; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j < inventory.size(); j++) {
+                String nameJ = inventory.get(j).getName().toLowerCase();
+                String nameMin = inventory.get(minIndex).getName().toLowerCase();
+                if (nameJ.compareTo(nameMin) < 0) {
+                    minIndex = j;
+                }
+            }
+            if (minIndex != i) {
+                Item tmp = inventory.get(i);
+                inventory.set(i, inventory.get(minIndex));
+                inventory.set(minIndex, tmp);
+            }
+        }
     }
     
     /**

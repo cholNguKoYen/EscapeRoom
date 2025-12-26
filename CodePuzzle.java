@@ -11,12 +11,9 @@ public class CodePuzzle extends Puzzle {
 
     @Override
     public void inspect() {
+        // Only show minimal metadata when inspecting generally.
+        // Full prompt/code should only be shown when the player chooses to solve.
         super.inspect();
-        if (!solved) {
-            System.out.println("Enter the code to unlock...");
-            System.out.println("Hack answer: " + correctCode);
-            System.out.println();
-        }
     }
 
     @Override
@@ -30,5 +27,12 @@ public class CodePuzzle extends Puzzle {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Return the correct code (hack) for display when the player chooses to solve.
+     */
+    public String getCorrectCode() {
+        return correctCode;
     }
 }
