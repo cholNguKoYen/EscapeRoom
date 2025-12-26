@@ -18,7 +18,7 @@ public class GameEngine {
     private Scanner scanner;
     private ArrayList<String> requiredItems; // Items needed to win
     private boolean puzzle5Bsolved;
-    
+
     public GameEngine() {
         this.map = new ArrayList<>();
         this.hintQueue = new LinkedList<>();
@@ -30,21 +30,25 @@ public class GameEngine {
     }
 
     /**
-     * Compare room names with a tolerant match: exact ignore-case, or normalized (remove spaces) match.
+     * Compare room names with a tolerant match: exact ignore-case, or normalized
+     * (remove spaces) match.
      */
     private boolean matchesRoomName(String roomName, String inputName) {
-        if (roomName.equalsIgnoreCase(inputName)) return true;
+        if (roomName.equalsIgnoreCase(inputName))
+            return true;
         String a = roomName.replaceAll("\\s+", "").toLowerCase();
         String b = inputName.replaceAll("\\s+", "").toLowerCase();
         return a.equals(b);
     }
 
     /**
-     * Print the full map showing top-level rooms as siblings and their internal subrooms.
+     * Print the full map showing top-level rooms as siblings and their internal
+     * subrooms.
      */
     private void printFullMap() {
         System.out.println("\n=== FULL MAP ===");
-        if (map.isEmpty()) return;
+        if (map.isEmpty())
+            return;
 
         Room entrance = findRoom("Entrance");
         if (entrance == null) {
@@ -52,11 +56,13 @@ public class GameEngine {
             Set<Room> subrooms = new HashSet<>();
             for (Room r : map) {
                 for (GameComponent comp : r.getContents()) {
-                    if (comp instanceof Room) subrooms.add((Room) comp);
+                    if (comp instanceof Room)
+                        subrooms.add((Room) comp);
                 }
             }
             for (Room r : map) {
-                if (!subrooms.contains(r)) r.exploreRecursive(0);
+                if (!subrooms.contains(r))
+                    r.exploreRecursive(0);
             }
             return;
         }
@@ -66,7 +72,8 @@ public class GameEngine {
     }
 
     private void printRoomDFS(Room r, int depth, Set<Room> visited) {
-        if (r == null || visited.contains(r)) return;
+        if (r == null || visited.contains(r))
+            return;
         visited.add(r);
 
         String indent = "  ".repeat(depth);
@@ -74,7 +81,8 @@ public class GameEngine {
 
         // Print non-room contents (items, puzzles)
         for (GameComponent comp : r.getContents()) {
-            if (comp instanceof Room) continue;
+            if (comp instanceof Room)
+                continue;
             System.out.println(indent + "   - " + comp.getName());
         }
 
@@ -92,9 +100,9 @@ public class GameEngine {
             }
         }
     }
-    
-    //Initialize the game map and the player.
-     
+
+    // Initialize the game map and the player.
+
     public void initializeGame() {
         // Create main rooms (same level)
         Room entrance = new Room("Entrance");
@@ -144,9 +152,11 @@ public class GameEngine {
         CodePuzzle p4b = new CodePuzzle("4B Code Lock", 4, "7777");
 
         // 5B puzzles (three puzzles)
-        RiddlePuzzle p5_1 = new RiddlePuzzle("5B Puzzle 1", 2, "I’m tall when I’m young, and I’m short when I’m old. What am I?", "Candle");
-        RiddlePuzzle p5_2 = new RiddlePuzzle("5B Puzzle 2", 3, "What has hands but can not clap?", "Clock");
-        RiddlePuzzle p5_3 = new RiddlePuzzle("5B Puzzle 3", 5, "What disappears as soon as you say its name?", "Silence");
+        RiddlePuzzle p5_1 = new RiddlePuzzle("Puzzle 1", 2,
+                "I’m tall when I’m young, and I’m short when I’m old. What am I?", "Candle");
+        RiddlePuzzle p5_2 = new RiddlePuzzle("Puzzle 2", 3, "What has hands but can not clap?", "Clock");
+        RiddlePuzzle p5_3 = new RiddlePuzzle("Puzzle 3", 5, "What disappears as soon as you say its name?",
+                "Silence");
 
         // Assemble room contents per specification
         entrance.addContent(any1);
@@ -192,6 +202,7 @@ public class GameEngine {
         r5b.addContent(p5_1);
         r5b.addContent(p5_2);
         r5b.addContent(p5_3);
+        r5b.addConnectedRoom(exit);
         room5.addContent(r5a);
 
         // Add rooms to map
@@ -220,7 +231,7 @@ public class GameEngine {
         hintQueue.offer("Some rooms require specific keys to enter (they may be consumed).");
         hintQueue.offer("Solve a puzzle in 5B to reveal the Exit room.");
     }
-    
+
     /**
      * Start the game loop.
      */
@@ -236,23 +247,23 @@ public class GameEngine {
         System.out.println("  - move <room>    : move to a connected room");
         System.out.println("  - back           : go back to the previous room");
         System.out.println("  - pickup <item>  : pick up an item in the room");
-        System.out.println("  - inventory      : view your inventory");
+        System.out.println("  - inventory / i  : view your inventory");
         System.out.println("  - solve <puzzle> : attempt to solve a puzzle");
         System.out.println("  - map            : show the full map");
         System.out.println("  - help           : show this list again");
         System.out.println("  - quit / exit    : leave the game");
         System.out.println("\nTip: type 'help' any time to see this list again.\n");
-        
+
         printStatus();
-        
+
         while (gameRunning) {
             System.out.print("\n> ");
             String input = scanner.nextLine().trim();
-            
+
             if (input.isEmpty()) {
                 continue;
             }
-            
+
             try {
                 boolean consumed = processCommand(input);
                 if (consumed) {
@@ -268,7 +279,7 @@ public class GameEngine {
                 }
 
                 winConditionCheck();
-                
+
             } catch (InvalidCommandException | LockedRoomException | InvalidPuzzleAnswerException e) {
                 System.out.println("Error: " + e.getMessage());
             } catch (Exception e) {
@@ -276,30 +287,31 @@ public class GameEngine {
                 e.printStackTrace();
             }
         }
-        
+
         scanner.close();
     }
-    
+
     /**
      * Process commands from the player.
      */
-    public boolean processCommand(String cmd) throws InvalidCommandException, LockedRoomException, InvalidPuzzleAnswerException {
+    public boolean processCommand(String cmd)
+            throws InvalidCommandException, LockedRoomException, InvalidPuzzleAnswerException {
         String[] parts = cmd.split("\\s+", 2);
         String command = parts[0].toLowerCase();
         String argument = parts.length > 1 ? parts[1] : "";
-        
+
         switch (command) {
             case "look":
                 player.getCurrentRoom().inspect();
                 return false;
-                
+
             case "move":
                 if (argument.isEmpty()) {
                     throw new InvalidCommandException("Syntax: move <room_name>");
                 }
                 moveToRoom(argument);
                 return true;
-                
+
             case "back":
                 if (player.goBack()) {
                     System.out.println("You moved back to room: " + player.getCurrentRoom().getName());
@@ -308,24 +320,26 @@ public class GameEngine {
                     System.out.println("Cannot move back!");
                     return false;
                 }
-                
+
             case "pickup":
                 if (argument.isEmpty()) {
                     throw new InvalidCommandException("Syntax: pickup <item_name>");
                 }
                 if (player.pickupItem(argument)) {
                     System.out.println("Picked up: " + argument);
-                    // After pickup, if current room (including subrooms) has no more items, notify player
+                    // After pickup, if current room (including subrooms) has no more items, notify
+                    // player
                     Room curr = player.getCurrentRoom();
                     if (!curr.hasAnyItemRecursive()) {
-                        System.out.println("Empty, try to look in other rooms");
+                        System.out.println("This room is quite empty, try to look in other rooms");
                     }
                 } else {
                     System.out.println("Item not found: " + argument);
                 }
                 return false;
-                
+
             case "inventory":
+            case "i":
                 if (argument.equalsIgnoreCase("alpha") || argument.equalsIgnoreCase("alphabet")) {
                     player.sortInventoryAlphabetical();
                     player.showInventory();
@@ -338,44 +352,44 @@ public class GameEngine {
                     System.out.println("Usage: inventory [value|alpha]");
                 }
                 return false;
-                
+
             case "solve":
                 if (argument.isEmpty()) {
                     throw new InvalidCommandException("Syntax: solve <puzzle_name>");
                 }
                 solvePuzzle(argument);
                 return false;
-                
+
             case "map":
                 printFullMap();
                 return false;
-                
+
             case "help":
                 showHelp();
                 return false;
-                
+
             case "quit":
             case "exit":
                 gameRunning = false;
                 System.out.println("Thank you for playing!");
                 return false;
-                
+
             default:
                 throw new InvalidCommandException("Invalid command. Type 'help' to see the command list.");
         }
-        
+
         // Default: no turn consumed
         // (shouldn't reach here because cases return or throw)
         // Return false as safe default.
         // return false;
     }
-    
+
     /**
      * Move to another room (connected room or subroom).
      */
     private void moveToRoom(String roomName) throws LockedRoomException {
         Room currentRoom = player.getCurrentRoom();
-        
+
         // First, check connected rooms
         Room targetRoom = null;
         for (Room room : currentRoom.getConnectedRooms()) {
@@ -384,7 +398,7 @@ public class GameEngine {
                 break;
             }
         }
-        
+
         // If not found in connected rooms, check subrooms (rooms in contents)
         if (targetRoom == null) {
             for (GameComponent component : currentRoom.getContents()) {
@@ -394,7 +408,7 @@ public class GameEngine {
                 }
             }
         }
-        
+
         if (targetRoom == null) {
             System.out.println("Room not found: " + roomName);
             System.out.println("Available rooms:");
@@ -410,32 +424,37 @@ public class GameEngine {
             }
             return;
         }
-        
+
         // Check whether the room requires a key
         if (targetRoom.getRequiredKey() != null) {
             String req = targetRoom.getRequiredKey();
             if (!player.hasKey(req)) {
                 throw new LockedRoomException("This room is locked! Required key: " + req);
             } else {
-                // If it's the final exit room, do not consume the Exit Key (keeps it in inventory)
+                // If it's the final exit room, do not consume the Exit Key (keeps it in
+                // inventory)
                 if (targetRoom.isExit()) {
-                    System.out.println("Used " + req + " to open the door to " + targetRoom.getName() + " (not consumed).");
-                    System.out.println("Room " + targetRoom.getName() + " has been unlocked using " + req + " (not consumed).");
+                    System.out.println(
+                            "Used " + req + " to open the door to " + targetRoom.getName() + " (not consumed).");
+                    System.out.println(
+                            "Room " + targetRoom.getName() + " has been unlocked using " + req + " (not consumed).");
                 } else {
                     // consume the key for regular locked rooms
                     player.removeKey(req);
                     // mark room as unlocked so it won't require the key again
                     targetRoom.setRequiredKey(null);
-                    System.out.println("Used " + req + " to unlock " + targetRoom.getName() + ". Key removed from inventory.");
+                    System.out.println(
+                            "Used " + req + " to unlock " + targetRoom.getName() + ". Key removed from inventory.");
                     System.out.println("Room " + targetRoom.getName() + " has been unlocked with the key.");
                 }
             }
         }
-        
+
         player.moveTo(targetRoom);
         System.out.println("Moved to: " + targetRoom.getName());
 
-        // If this is a subroom with no connected rooms and no subrooms inside, it's a dead end
+        // If this is a subroom with no connected rooms and no subrooms inside, it's a
+        // dead end
         boolean hasSubroom = false;
         for (GameComponent comp : targetRoom.getContents()) {
             if (comp instanceof Room) {
@@ -447,7 +466,7 @@ public class GameEngine {
             System.out.println("Dead end — try the \"back\" command to return to the previous room");
         }
     }
-    
+
     /**
      * Solve a puzzle.
      */
@@ -455,8 +474,10 @@ public class GameEngine {
         Room currentRoom = player.getCurrentRoom();
         Puzzle puzzle = currentRoom.findPuzzle(puzzleName);
 
-        // If not found as a single puzzle, check if player requested to solve a room that
-        // contains multiple puzzles (e.g., subroom 5B). Support calling: solve <subroomName>
+        // If not found as a single puzzle, check if player requested to solve a room
+        // that
+        // contains multiple puzzles (e.g., subroom 5B). Support calling: solve
+        // <subroomName>
         if (puzzle == null) {
             // Try to find a Room component with that name inside current room
             Room puzzleRoom = null;
@@ -483,35 +504,35 @@ public class GameEngine {
             System.out.println("Puzzle not found: " + puzzleName);
             return;
         }
-        
+
         if (puzzle.isSolved()) {
             System.out.println("This puzzle is already solved!");
             return;
         }
-        
+
         // Show puzzle info
         puzzle.inspect();
-        
+
         // Ask if player wants to solve now or continue
         System.out.println("\nDo you want to solve this puzzle now? (yes/no)");
         System.out.print("Your choice: ");
         String choice = scanner.nextLine().trim().toLowerCase();
-        
+
         if (!choice.equals("yes") && !choice.equals("y")) {
             System.out.println("You decided to continue without solving the puzzle.");
             return;
         }
-        
+
         // Player wants to solve, ask for answer
         System.out.println("\nType only the answer word or phrase.");
         System.out.println("Example: for the riddle 'I have cities, but no houses...");
         System.out.print("Your answer is: ");
         String answer = scanner.nextLine().trim();
-        
+
         if (puzzle.attemptSolve(answer)) {
             System.out.println("Congratulations! You solved the puzzle!");
             puzzle.setSolved(true);
-            
+
             // Puzzle giải được có thể unlock các thứ (ví dụ: thêm key, unlock room)
             handlePuzzleSolved(puzzle);
         } else {
@@ -522,7 +543,8 @@ public class GameEngine {
     /**
      * Solve when a room contains multiple puzzles (selection + optional sort)
      */
-    private void solveMultiplePuzzles(Room puzzleRoom, ArrayList<Puzzle> puzzlesInside) throws InvalidPuzzleAnswerException {
+    private void solveMultiplePuzzles(Room puzzleRoom, ArrayList<Puzzle> puzzlesInside)
+            throws InvalidPuzzleAnswerException {
         System.out.println("This area contains multiple puzzles. Do you want to sort them by difficulty? (yes/no)");
         System.out.print("Your choice: ");
         String ch = scanner.nextLine().trim().toLowerCase();
@@ -576,21 +598,22 @@ public class GameEngine {
             System.out.println("Wrong answer! Try again.");
         }
     }
-    
+
     /**
      * Handle logic when a puzzle has been solved.
      * Puzzles can unlock keys, unlock room connections, or add hints.
      */
     private void handlePuzzleSolved(Puzzle puzzle) {
         String puzzleName = puzzle.getName();
-        
+
         // Room1 subroom 1A solved -> place key for Room3 inside subroom 1A
         if (puzzleName.equalsIgnoreCase("1A Riddle")) {
             Item key = new Item("key_room3", 1, Item.ItemType.KEY);
             Room where = findRoom("1A");
             if (where != null) {
                 where.addContent(key);
-                System.out.println("A key to Room 3 has been revealed in " + where.getName() + ". Use 'pickup key_room3' to collect it.");
+                System.out.println("A key to Room 3 has been revealed in " + where.getName()
+                        + ". Use 'pickup key_room3' to collect it.");
             } else {
                 player.addToInventory(key);
                 System.out.println("A key to Room 3 has been added to your inventory (fallback): " + key.getName());
@@ -603,7 +626,8 @@ public class GameEngine {
             Room where = findRoom("1B");
             if (where != null) {
                 where.addContent(key);
-                System.out.println("A key to Room 4 has been revealed in " + where.getName() + ". Use 'pickup key_room4' to collect it.");
+                System.out.println("A key to Room 4 has been revealed in " + where.getName()
+                        + ". Use 'pickup key_room4' to collect it.");
             } else {
                 player.addToInventory(key);
                 System.out.println("A key to Room 4 has been added to your inventory (fallback): " + key.getName());
@@ -616,7 +640,8 @@ public class GameEngine {
             Room where = findRoom("Room 3");
             if (where != null) {
                 where.addContent(key);
-                System.out.println("A key to Room 5 has been revealed in " + where.getName() + ". Use 'pickup key_room5' to collect it.");
+                System.out.println("A key to Room 5 has been revealed in " + where.getName()
+                        + ". Use 'pickup key_room5' to collect it.");
             } else {
                 player.addToInventory(key);
                 System.out.println("A key to Room 5 has been added to your inventory (fallback): " + key.getName());
@@ -625,14 +650,15 @@ public class GameEngine {
 
         // 4B code lock -> place Exit Key inside subroom 4B
         if (puzzleName.equalsIgnoreCase("4B Code Lock")) {
-            Item exitKey = new Item("Exit Key", 50, Item.ItemType.KEY);
+            Item exitKey = new Item("Exit_Key", 50, Item.ItemType.KEY);
             Room where = findRoom("4B");
             if (where != null) {
                 where.addContent(exitKey);
-                System.out.println("You solved the 4B code lock. The Exit Key has appeared in " + where.getName() + ". Use 'pickup Exit Key' to collect it.");
+                System.out.println("You solved the 4B code lock. The Exit_Key has appeared in " + where.getName()
+                        + ". Use 'pickup Exit_Key' to collect it.");
             } else {
                 player.addToInventory(exitKey);
-                System.out.println("You solved the 4B code lock and received the Exit Key (fallback)!");
+                System.out.println("You solved the 4B code lock and received the Exit_Key (fallback)!");
             }
         }
 
@@ -644,7 +670,8 @@ public class GameEngine {
             Room exitRoom = findRoom("Exit Room");
             if (room5 != null && exitRoom != null) {
                 room5.addConnectedRoom(exitRoom);
-                hintQueue.offer("You heard a distant rumble: A new door has opened somewhere (the Exit might be visible now).");
+                hintQueue.offer(
+                        "You heard a distant rumble: A new door has opened somewhere (the Exit might be visible now).");
                 System.out.println("Solving this puzzle has revealed a new path. Use 'look' to inspect nearby rooms.");
             }
         }
@@ -661,7 +688,7 @@ public class GameEngine {
         }
         return null;
     }
-    
+
     /**
      * Print the current game status.
      */
@@ -688,7 +715,7 @@ public class GameEngine {
         }
         System.out.println("=".repeat(40));
     }
-    
+
     /**
      * Check win condition.
      * Player must collect all required items AND reach the EXIT.
@@ -697,7 +724,7 @@ public class GameEngine {
         if (!player.getCurrentRoom().isExit()) {
             return; // Not at exit yet
         }
-        
+
         // Check if player has all required items
         ArrayList<String> missingItems = new ArrayList<>();
         for (String requiredItem : requiredItems) {
@@ -712,7 +739,7 @@ public class GameEngine {
                 missingItems.add(requiredItem);
             }
         }
-        
+
         if (missingItems.isEmpty()) {
             // Win condition met: at exit AND has all required items
             System.out.println("\n" + "=".repeat(50));
@@ -732,7 +759,7 @@ public class GameEngine {
             System.out.println("=".repeat(50));
         }
     }
-    
+
     /**
      * Display help menu.
      */
@@ -748,9 +775,9 @@ public class GameEngine {
         System.out.println("help                - Show this menu");
         System.out.println("quit/exit           - Exit the game");
     }
-    
+
     /**
-y     * Sort puzzles by difficulty using selection sort.
+     * y * Sort puzzles by difficulty using selection sort.
      */
     public void sortPuzzlesByDifficulty(ArrayList<Puzzle> puzzles) {
         // Selection sort
@@ -767,4 +794,3 @@ y     * Sort puzzles by difficulty using selection sort.
         }
     }
 }
-

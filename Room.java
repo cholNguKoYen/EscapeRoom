@@ -9,7 +9,7 @@ public class Room extends GameComponent {
     private ArrayList<Room> connectedRooms;
     private boolean isExit;
     private String requiredKey; // null if no key is required
-    
+
     public Room(String name) {
         super(name);
         this.contents = new ArrayList<>();
@@ -17,7 +17,7 @@ public class Room extends GameComponent {
         this.isExit = false;
         this.requiredKey = null;
     }
-    
+
     public Room(String name, String requiredKey) {
         super(name);
         this.contents = new ArrayList<>();
@@ -25,15 +25,15 @@ public class Room extends GameComponent {
         this.isExit = false;
         this.requiredKey = requiredKey;
     }
-    
+
     public void setExit(boolean isExit) {
         this.isExit = isExit;
     }
-    
+
     public boolean isExit() {
         return isExit;
     }
-    
+
     public String getRequiredKey() {
         return requiredKey;
     }
@@ -44,23 +44,23 @@ public class Room extends GameComponent {
     public void setRequiredKey(String requiredKey) {
         this.requiredKey = requiredKey;
     }
-    
+
     public void addContent(GameComponent component) {
         contents.add(component);
     }
-    
+
     public void addConnectedRoom(Room room) {
         connectedRooms.add(room);
     }
-    
+
     public ArrayList<GameComponent> getContents() {
         return contents;
     }
-    
+
     public ArrayList<Room> getConnectedRooms() {
         return connectedRooms;
     }
-    
+
     @Override
     public void inspect() {
         System.out.println("=== Room: " + name + " ===");
@@ -83,9 +83,10 @@ public class Room extends GameComponent {
             System.out.println("- " + room.getName());
         }
     }
-    
+
     /**
      * Recursive method để explore (khám phá) tất cả các phòng
+     * 
      * @param depth Độ sâu hiện tại trong cây recursive
      */
     public void exploreRecursive(int depth) {
@@ -107,9 +108,10 @@ public class Room extends GameComponent {
             }
         }
     }
-    
+
     /**
      * Recursive method để tìm item trong phòng và các phòng con
+     * 
      * @param itemName Tên item cần tìm
      * @return true nếu tìm thấy, false nếu không
      */
@@ -126,24 +128,25 @@ public class Room extends GameComponent {
                 }
             }
         }
-        
+
         // Tìm trong connected rooms
         for (Room room : connectedRooms) {
             if (room.containsItemRecursive(itemName)) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Recursive method để tính độ sâu tối đa của cây phòng
+     * 
      * @return Độ sâu tối đa
      */
     public int maxDepthRecursive() {
         int maxDepth = 0;
-        
+
         // Tìm độ sâu tối đa trong subrooms
         for (GameComponent component : contents) {
             if (component instanceof Room) {
@@ -151,16 +154,16 @@ public class Room extends GameComponent {
                 maxDepth = Math.max(maxDepth, depth);
             }
         }
-        
+
         // Tìm độ sâu tối đa trong connected rooms
         for (Room room : connectedRooms) {
             int depth = room.maxDepthRecursive();
             maxDepth = Math.max(maxDepth, depth);
         }
-        
+
         return maxDepth + 1;
     }
-    
+
     /**
      * Find item in the current room (searches in subrooms too).
      */
@@ -182,9 +185,10 @@ public class Room extends GameComponent {
         }
         return null;
     }
-    
+
     /**
      * Remove an item from the current room or its subrooms.
+     * 
      * @param item The item to remove
      * @return true if the item was found and removed, false otherwise
      */
@@ -220,7 +224,7 @@ public class Room extends GameComponent {
         }
         return false;
     }
-    
+
     /**
      * Find puzzle in the current room (searches in subrooms too).
      */
@@ -243,4 +247,3 @@ public class Room extends GameComponent {
         return null;
     }
 }
-
