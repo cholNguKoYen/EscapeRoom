@@ -717,8 +717,29 @@ public class GameEngine {
     }
 
     /**
+     * Check if at least one puzzle in Room 5B is solved.
+     */
+    private boolean isAnyPuzzleIn5BSolved() {
+        Room room5B = findRoom("5B");
+        if (room5B == null) {
+            return false;
+        }
+
+        for (GameComponent component : room5B.getContents()) {
+            if (component instanceof Puzzle) {
+                Puzzle puzzle = (Puzzle) component;
+                if (puzzle.isSolved()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check win condition.
-     * Player must collect all required items AND reach the EXIT.
+     * Player must collect all required items, solve at least one puzzle in Room 5B,
+     * AND reach the EXIT.
      */
     public void winConditionCheck() {
         if (!player.getCurrentRoom().isExit()) {
@@ -740,22 +761,30 @@ public class GameEngine {
             }
         }
 
-        if (missingItems.isEmpty()) {
-            // Win condition met: at exit AND has all required items
+        // Check if at least one puzzle in Room 5B is solved
+        boolean puzzle5BSolved = isAnyPuzzleIn5BSolved();
+
+        if (missingItems.isEmpty() && puzzle5BSolved) {
+            // Win condition met: at exit, has all required items, and solved a puzzle in 5B
             System.out.println("\n" + "=".repeat(50));
             System.out.println("CONGRATULATIONS! YOU ESCAPED THE ROOM!");
-            System.out.println("You collected all required items and reached the exit!");
+            System.out.println("You collected all required items, solved a puzzle in Room 5B, and reached the exit!");
             System.out.println("Number of turns: " + turnCounter);
             System.out.println("=".repeat(50));
             gameRunning = false;
         } else {
-            // At exit but missing required items
+            // At exit but missing required items or unsolved puzzles
             System.out.println("\n" + "=".repeat(50));
-            System.out.println("You reached the EXIT, but you're missing required items:");
-            for (String item : missingItems) {
-                System.out.println("  - " + item);
+            if (!missingItems.isEmpty()) {
+                System.out.println("You reached the EXIT, but you're missing required items:");
+                for (String item : missingItems) {
+                    System.out.println("  - " + item);
+                }
             }
-            System.out.println("You need to collect all required items to escape!");
+            if (!puzzle5BSolved) {
+                System.out.println("You need to solve at least one puzzle in Room 5B to escape!");
+            }
+            System.out.println("You need to fulfill all conditions to escape!");
             System.out.println("=".repeat(50));
         }
     }
